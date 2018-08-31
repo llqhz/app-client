@@ -1,8 +1,10 @@
 // pages/product/product.js
-import { Product } from './product-model.js'
+import { Product } from './product-model.js';
+import { Cart } from '../cart/cart-model.js';
+
 var currentApp = {};
 var product = new Product();
-
+var cart = new Cart();
 
 Page({
 
@@ -60,8 +62,15 @@ Page({
 
     // 添加到购物车 
     addToCart: function(data,e){
-      console.log(currentApp.data)
-      console.log(data)
+      var item = currentApp.data.product;
+      var keys = [ 'id','name','main_img_url','price' ];
+      var data = {};
+      item.forEach(function(li,key){
+        if( keys.indexOf(key) >= 0 ) {
+          data[key] = li;
+        }
+      });
+      cart.addCart(data, this.data.countVal);
     }
   }
 

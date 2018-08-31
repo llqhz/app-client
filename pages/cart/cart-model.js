@@ -3,8 +3,8 @@ import { Model } from '../base/model.js';
 
 
 class Cart extends Model {
-  
-  list = [];  // { product_id: 2, count: 1}
+    // { 'id','name','main_img_url','price' }
+  list = []; 
   cartStoreKey = 'cart';
 
 
@@ -20,7 +20,6 @@ class Cart extends Model {
     if ( pIndex === false ) {
       // 添加商品
       item.count = count;
-      item.product_id = item.id;
       item.selectStatus = true;
       cart.push(item);
     } else {
@@ -50,7 +49,7 @@ class Cart extends Model {
   _isHasOne(id, cart){
     var pIndex = false;
     cart.forEach((item,index)=>{
-      if (id == item.product_id ) {
+      if (id == item.id ) {
         pIndex = index;
       }
     });
