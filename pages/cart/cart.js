@@ -16,7 +16,7 @@ Page({
   },
 
   /**
-   * 生命周期函数--监听页面加载
+   * 加载一次执行 
    */
   onLoad: function (options) {
     currentApp = this;
@@ -30,11 +30,11 @@ Page({
 
 
   /**
-   * 生命周期函数--监听页面初次渲染完成
+   * 每次显示都执行
    */
-  onReady: function () {
-  
-  },
+  onShow: function(){
+    
+  }
 
   
   

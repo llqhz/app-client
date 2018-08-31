@@ -9,6 +9,7 @@
       <!-- 购物车 -->
       <view class='fiexd-cart'>
         <image src='../../imgs/icon/cart@top.png'></image>
+        <view hidden='{{cartCount==0}}'> {{ cartCount }} </view>
       </view>
     </view>
     

@@ -8,5 +8,6 @@ class Model {
   setApp(app){
     this.app = app;
   }
+
 }
 module.exports = { Model }

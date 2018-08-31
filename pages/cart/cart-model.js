@@ -16,7 +16,7 @@ class Cart extends Model {
   // 判断商品是否存在,存在则+count,不存在则添加商品数量
   addCart(item, count) {
     var cart = this.getCart();
-    var pIndex = _isHasOne(item.id, cart);
+    var pIndex = this._isHasOne(item.id, cart);
     if ( pIndex === false ) {
       // 添加商品
       item.count = count;
@@ -24,7 +24,7 @@ class Cart extends Model {
       cart.push(item);
     } else {
       // 增加数量
-      cart[index].count += count;
+      cart[pIndex].count += count;
     }
     this.setCart(cart)
   }
@@ -37,6 +37,15 @@ class Cart extends Model {
       cart = [];
     }
     return cart;
+  }
+
+  getCartCount(){
+    var length = 0;
+    var cart = this.getCart();
+    for ( var item of cart ) {
+      length += item.count;
+    }
+    return length
   }
 
   // 设置购物车到缓存中

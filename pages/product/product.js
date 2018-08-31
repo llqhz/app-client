@@ -17,6 +17,7 @@ Page({
     countsArr: [1,2,3,4,5,6,7,8,9,10],
     countVal:1,
     currentTabIndex:0,
+    cartCount: 0,
   },
 
   /**
@@ -33,7 +34,11 @@ Page({
   },
 
   _loadData: function(){
-    product.getDetail(this.data.id)
+    product.getDetail(this.data.id).then(res=>{
+      wx.setNavigationBarTitle({ title: currentApp.data.product.name })
+    });
+    this.setData({ cartCount: cart.getCartCount() });
+
   },
 
   // 监听事件
@@ -61,16 +66,23 @@ Page({
     },
 
     // 添加到购物车 
-    addToCart: function(data,e){
+    addToCart: (data,e)=>{
       var item = currentApp.data.product;
       var keys = [ 'id','name','main_img_url','price' ];
       var data = {};
-      item.forEach(function(li,key){
-        if( keys.indexOf(key) >= 0 ) {
-          data[key] = li;
+      
+      for ( var i in item ) {
+        if (keys.indexOf(i) >= 0 ) {
+          data[i] = item[i];
         }
-      });
-      cart.addCart(data, this.data.countVal);
+      }
+      // 通知购物车
+      var cdata = currentApp.data;
+      cart.addCart(data, cdata.countVal);
+      
+      // 更新显示
+      var newCount = cdata.cartCount + cdata.countVal
+      currentApp.setData({ cartCount: newCount })
     }
   }
 

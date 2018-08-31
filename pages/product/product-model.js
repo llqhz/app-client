@@ -9,17 +9,17 @@ class Product extends Model {
 
   // 加载商品详情
   getDetail(id){
-    llwx.pajax({
-      url: 'product/'+id,
-      method: 'get'
-    }).then(res=>{
-      this.app.setData({
-        product: res
-      })
-    },
-      err=>{
+    return llwx.pajax({
+        url: 'product/'+id,
+        method: 'get'
+      }).then(res=>{
+        this.app.setData({
+          product: res
+        })
+      },
+        err=>{
 
-    });
+      });
   }
 
   setCount(index){
