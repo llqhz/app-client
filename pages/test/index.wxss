@@ -1,0 +1,20 @@
+/* pages/test/index.wxss */
+.containers {
+    margin: 12px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.hr {
+    margin: 10px;
+    border: 1px solid #ccc;
+}
+
+button {
+    margin-bottom: 10px;
+    height: 80rpx;
+    line-height: 80rpx;
+    font-size: 40rpx;
+}

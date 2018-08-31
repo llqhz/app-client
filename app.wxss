@@ -1,0 +1,15 @@
+/**app.wxss**/
+.container {
+  height: 100%;
+  display: flex;
+  /* 子项目采用列排布 */
+  flex-direction: column; 
+  /* 字项目排布方式 */
+  align-items: center;
+  justify-content: space-between;
+  /* padding: 200rpx 0; */
+  box-sizing: border-box;
+  background-color: #fff;
+  font-family: 'Microsoft YaHei','黑体';
+} 
+

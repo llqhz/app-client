@@ -1,0 +1,46 @@
+<!--pages/home/home.wxml-->
+
+<!-- 引入模板文件 -->
+<import src="../tpls/products/products-tpl.wxml" />
+
+
+<!-- 页面整体body -->
+<view class='container'>
+  
+  <!-- 轮播图 -->
+  <swiper indicator-dots='true' autoplay='true' class='swiper'>
+    <block wx:for="{{ bannerSwiper }}" wx:key='index'  >
+      <swiper-item class="banner-item" data-id="{{ item.key_word }}" bindtap="listen" data-fun="jumpToProduct">
+        <image mode='aspectFill' class='item-img' src='{{ item.img.url }}'></image>
+      </swiper-item>
+    </block>
+  </swiper>
+  
+  <!-- 下部主体 -->
+  <view class='home-main'>
+    
+    <!-- 精选专题 -->
+    <view class='home-main-theme'>
+      <view class='home-main-header'>精选主题</view>
+      <!-- 三个图片box -->
+      <view class='theme-box'>
+        <block wx:for="{{themeList}}" wx:for-item="li" wx:key="index" wx:for-index="index">
+          <view wx:if="{{ index == 2 }}" class="theme-item big" data-id='{{ li.id }}' data-name="{{li.name}}" bindtap='listen' data-fun='jumpToTheme' >
+            <image src="{{li.topic_img.url}}"></image>
+          </view>
+          <view wx:else class='theme-item' data-id='{{ li.id }}' data-name="{{li.name}}" bindtap='listen' data-fun='jumpToTheme' >
+            <image src="{{li.topic_img.url}}"></image>
+          </view>
+        </block> 
+      </view>
+    </view>
+
+    <!-- 最近新品   -->
+    <view class='home-main-products'>
+      <view class='home-main-header'>最近新品</view>
+      <template is="products" data="{{ products:productList }}"></template>
+    </view>
+
+  </view><!-- / 下部主体结束 -->
+</view>
+

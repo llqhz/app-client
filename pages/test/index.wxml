@@ -1,0 +1,9 @@
+<!--pages/test/index.wxml-->
+
+<view class='containers'>
+  <view class='text-center'>pages/test/index.wxml</view>
+  <view class='hr'></view>
+  <button bindtap='click' data-fun='getToken' type="primary">申请用户token</button>
+  <button bindtap='click' data-fun='createAddress' type="primary">增加收货地址</button>
+  <button bindtap='click' data-fun='placeOrder' type="primary">订单下单</button>
+</view>
