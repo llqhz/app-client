@@ -102,6 +102,7 @@
 }
 
 
+
 /*合计*/
 .all-accounts-box{
     background-color:#AB956D;
@@ -114,6 +115,8 @@
 .all-select{
     font-size: 28rpx;
     width: 40%;
+    display: flex;
+    align-items: center;
 }
 .all-select image{
     height: 48rpx;
@@ -123,6 +126,8 @@
 
 .all-price-submit{
     width: 60%;
+    display:flex;
+    align-items: center;
 }
 .all-price-submit.disabled{
     color: #e6e6e6;

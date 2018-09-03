@@ -5,7 +5,7 @@
   <view class='detail-header-box'>
     
     <!-- 购物车导航条 -->
-    <view class='fixed-btns-box'>
+    <view class='fixed-btns-box' bindtap='listen' data-fun="jumpToCart">
       <!-- 购物车 -->
       <view class='fiexd-cart'>
         <image src='../../imgs/icon/cart@top.png'></image>

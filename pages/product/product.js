@@ -54,6 +54,13 @@ Page({
 
   // 处理事件
   eventHandler: {
+    // 跳转到购物车
+    jumpToCart: (data,e) => {
+      wx.switchTab({
+        url: '/pages/cart/cart',
+      })
+    },
+
     // 商品数量选择
     onPickerChange: (data,e) => {
       var index = e.detail.value;
