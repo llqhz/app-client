@@ -31,19 +31,34 @@ class Cart extends Model {
 
 
   // 从缓存中获取购物车
-  getCart() {
+  // 是否仅返回选中的商品
+  getCart(flag) {
     var cart = wx.getStorageSync(this.cartStoreKey);
     if ( !cart ) {
       cart = [];
     }
+    if ( flag ) {
+      for ( var i=0; i<cart.length; i++ ) {
+        if (!cart[i].selectStatus) {
+          cart.splice(i,1)
+        }
+      }
+    } 
     return cart;
   }
 
-  getCartCount(){
+  // flag 表示是否仅返回选中的商品
+  getCartCount(flag){
     var length = 0;
     var cart = this.getCart();
     for ( var item of cart ) {
-      length += item.count;
+      if( flag ) {
+        if( item.selectStatus ) {
+          length += item.count;
+        }
+      } else {
+        length += item.count;
+      }
     }
     return length
   }
@@ -64,6 +79,41 @@ class Cart extends Model {
     });
     return pIndex;
   }
+
+  // 根据商品Id获取商品下标
+  getProductIndexById(id){
+    var carts = this.getCart();
+    var pIndex = -1;
+    carts.forEach(function(item,index){
+      if(item.id == id) {
+        pIndex = index
+      }
+    });
+    return pIndex;
+  }
+
+  // 计算金额和数量
+  getCountAddMoney(cart) {
+    var totalCount = 0, typeCount = 0, money = 0;
+    let mp = 100; // 使用整数计算
+    for (var li of cart) {
+      totalCount += li.count;
+      typeCount++;
+      money += mp * Number(li.price) * li.count;
+    }
+    return {
+      totalCount: totalCount,
+      typeCount: typeCount,
+      money: money / mp
+    }
+  }
+
+  // 计算数量和总价
+  resetCartData(){
+
+  }
+
+
 
 }
 
