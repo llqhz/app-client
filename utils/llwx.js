@@ -11,13 +11,12 @@
 
 import { Config } from 'config.js';
 
-
 var llwx = {
   config: {
     host: Config.host,   // 指定请求的host
     header: {   // 指定请求的header
       'content-type': 'application/json',
-      'token': wx.getStorageSync('token'),
+      'token': wx.getStorageSync(Config.tokenKey),
     },
   },
   // 设置配置
@@ -80,7 +79,7 @@ var llwx = {
   ajax: function (opt) {
     if (typeof opt.url == 'undefined') { console.log("ajax url not found ..."); return; };
     var req = { url: this.url(opt.url) };
-    req.method = opt.method || 'POST';
+    req.method = (opt.method || 'POST').toUpperCase();
     req.dataType = opt.dataType || 'json';
     req.responseType = opt.responseType || 'text';
     req.fail = r => {
@@ -102,17 +101,92 @@ var llwx = {
     }
   },
   pajax: function(opt){
-    var that = this;
     return new Promise((resolve,reject)=>{
-      opt.success = res => resolve(res);
+      opt.success = res => resolve(res)
       opt.fail = err => reject(err);
-      that.ajax(opt);
+      // return与不return的区别是 是否等待Promise里面的程序执行完
+      return new Promise((resolve1,reject1)=>{ 
+        if (opt.token == true) {
+          return this.Token.verify().then(res=>{
+            resolve1(res)
+          })
+        } else {
+          resolve1();
+        }
+      }).then(res=>{
+        this.ajax(opt);
+      });
     });
   },
+  Token: {
+    key: () => Config.tokenKey,
+    get(){
+      return wx.getStorageSync(this.key())
+    },
+    set(token) { 
+      wx.setStorageSync(this.key(), token)
+    },
+    verify() {
+      var token = this.get(); 
+      if (!token) {
+        return this.getTokenFromServer();
+      } else {
+        return this.verifyTokenFromServer();
+      }
+    },
+    // 获取Token
+    getTokenFromServer() {
+      return new Promise((resolve, reject) => {
+        // this 指向 llwx.Token  即与 new Promise 同级
+        wx.login({
+          success: res => {
+            // this 指向 llwx.Token
+            llwx.pajax({
+              url: 'token/user',
+              method: 'get',
+              data: {
+                code: res.code
+              }
+            }).then(res => {
+              // this 指向 llwx.Token
+              if (res.token) {
+                this.set(res.token);
+                resolve(res.token);
+              } else {
+                reject(res)
+                console.log('get token error:', res)
+              }
+            })
+          }
+        })
+      })
+    },
+
+    // 验证token并自动更新
+    verifyTokenFromServer() {
+        return new Promise((resolve, reject) => {
+          llwx.pajax({
+            url: 'token/user/verify',
+            method: 'post',
+            data: { token: this.get() }
+          }).then(res => {
+            if (!res.isValid) {
+              this.getTokenFromServer().then(res => {
+                resolve(res);
+              })
+            } else {
+              resolve(this.get())
+            }
+          })
+        });
+      }
+  }
 };
 
 
-module.exports = { llwx };
+module.exports = { 
+  llwx
+};
 
 
 

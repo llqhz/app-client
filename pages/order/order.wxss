@@ -12,8 +12,13 @@
 .order-main{
     padding-bottom:92rpx;
 }
-.order-address-info,.order-basic-info{
+.order-address-info,.order-basic-info {
     padding:20rpx 40rpx;
+    width: 100%;
+}
+.contact-box {
+  width: 90%;
+  margin-left: 5%;
 }
 
 .order-basic-info{
@@ -70,7 +75,7 @@
     align-items: center;
 }
 .contact .mobile-box{
-    flex-basis: 200rpx;
+    flex-basis: 300rpx;
 }
 .contact image{
     height:32rpx;

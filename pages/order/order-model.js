@@ -9,6 +9,12 @@ class Order extends Model {
 
 
 
+  test(){
+    console.log('test ----------')
+    var a = llwx.Token.getTokenFromServer();
+  }
+
+
 }
 
 

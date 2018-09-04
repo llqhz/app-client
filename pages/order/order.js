@@ -1,11 +1,13 @@
 // pages/order/order.js
 import { Order } from 'order-model.js';
 import { Cart } from '../cart/cart-model.js';
+import { Address } from './address-model.js'
 
 const app = getApp()
 var currentApp = {};
 var order = new Order();
 var cart = new Cart();
+var address = new Address();
 
 Page({
 
@@ -16,7 +18,7 @@ Page({
     products : [],   // 订单包含的商品
     selectedMoney: 0, // 订单总金额
     orderStatus: 0,
-    address: {},   // 收货地址
+    address: null,   // 收货地址
   },
 
   /**
@@ -24,7 +26,8 @@ Page({
    */
   onLoad: function (options) {
     currentApp = this;   // 不加 var
-    console.log(currentApp)
+    order.setApp(currentApp)
+    address.setApp(currentApp)
     var origin = options.from;
     if ( origin == 'cart' ) {
       // 从购物车进入
@@ -40,7 +43,7 @@ Page({
   },
 
   _loadData: function(){
-
+    //order.test()
   },
 
   // 监听事件
@@ -61,9 +64,13 @@ Page({
         success: (res) => {
           var addressInfo = {
             name: res.userName,
-            mobile: res. telNumber
-          };
-          this.setData({address:addressInfo})
+            mobile: res. telNumber,
+            totalDetail: address.getAddressDetail(res)
+          };  
+          // 更新视图
+          currentApp.setData({address:addressInfo})
+          // 后台保存
+          address.submitAddress(res);
         }
       })
     }

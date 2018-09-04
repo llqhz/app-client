@@ -21,20 +21,20 @@
 
   <!--地址-->
   <view class="order-address-info {{orderStatus!=0?'disabled':''}}" bindtap="listen" data-fun="editAddress" >
-    <block wx:if="{{addressInfo}}" wx:key="{{index}}" >
+    <block wx:if="{{address}}" >
       <view class="contact-box">
         <view>
           <view class="contact">
               <view>
                 <image src="../../imgs/icon/user.png"></image>
-                <text class="val">{{addressInfo.name}}</text>
+                <text class="val">{{address.name}}</text>
               </view>
               <view class="mobile-box">
                 <image src="../../imgs/icon/mobile.png"></image>
-                <text  class="val">{{addressInfo.mobile}}</text>
+                <text  class="val">{{address.mobile}}</text>
               </view>
           </view>
-          <view class="detail">{{addressInfo.totalDetail}}</view>
+          <view class="detail">{{address.totalDetail}}</view>
         </view>
         <view class="contact-icon" wx:if="{{orderStatus==0}}">
             <image src="../../imgs/icon/arrow@right.png"></image>
@@ -50,7 +50,7 @@
 
   <!--列表-->
   <view class="order-main">
-    <block wx:for="{{products}}">
+    <block wx:for="{{products}}" wx:key="{{index}}">
       <view class="product-item">
         <view class="item-left">
           <image src="{{item.main_img_url}}"></image>
