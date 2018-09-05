@@ -16,7 +16,7 @@ var llwx = {
     host: Config.host,   // 指定请求的host
     header: {   // 指定请求的header
       'content-type': 'application/json',
-      'token': wx.getStorageSync(Config.tokenKey),
+      'token': 'defalut',
     },
   },
   // 设置配置
@@ -88,10 +88,11 @@ var llwx = {
     }
     req.complete = r => typeof opt.complete == 'function' ? opt.complete(r) : 0;
     typeof opt.complete == 'function' ? (req.complete = opt.complete) : 0;
-    req.success = r => typeof opt.success == 'function' ? opt.success(r.data) : 0;
+    req.success = r => typeof opt.success == 'function' ? opt.success(r.data,r) : 0;
     req.complete = typeof opt.complete == 'function' ? opt.complete : false;
     if (opt.data) { req.data = opt.data; };
-    // 加入header
+    // 加入header  默认+传参
+    this.config.header.token = this.Token.get();
     this.extend(this.config.header, opt.header);
     req.header = this.config.header;
     try {
@@ -102,7 +103,7 @@ var llwx = {
   },
   pajax: function(opt){
     return new Promise((resolve,reject)=>{
-      opt.success = res => resolve(res)
+      opt.success = (res,r) => resolve(res)
       opt.fail = err => reject(err);
       // return与不return的区别是 是否等待Promise里面的程序执行完
       return new Promise((resolve1,reject1)=>{ 
@@ -114,7 +115,7 @@ var llwx = {
           resolve1();
         }
       }).then(res=>{
-        this.ajax(opt);
+        this.ajax(opt);  // 返不返回Promise决定是否异步,
       });
     });
   },
@@ -147,7 +148,7 @@ var llwx = {
               data: {
                 code: res.code
               }
-            }).then(res => {
+            }).then((res,rsp) => {
               // this 指向 llwx.Token
               if (res.token) {
                 this.set(res.token);
@@ -169,7 +170,7 @@ var llwx = {
             url: 'token/user/verify',
             method: 'post',
             data: { token: this.get() }
-          }).then(res => {
+          }).then((res,rsp) => {
             if (!res.isValid) {
               this.getTokenFromServer().then(res => {
                 resolve(res);
