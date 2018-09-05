@@ -83,12 +83,12 @@ var llwx = {
     req.dataType = opt.dataType || 'json';
     req.responseType = opt.responseType || 'text';
     req.fail = r => {
-      console.log('wxapp ajax error',r);
+      console.log('wxapp ajax error', r);
       typeof opt.fail == 'function' ? opt.fail(r) : 0;
     }
     req.complete = r => typeof opt.complete == 'function' ? opt.complete(r) : 0;
     typeof opt.complete == 'function' ? (req.complete = opt.complete) : 0;
-    req.success = r => typeof opt.success == 'function' ? opt.success(r.data,r) : 0;
+    req.success = r => typeof opt.success == 'function' ? opt.success(r.data, r) : 0;
     req.complete = typeof opt.complete == 'function' ? opt.complete : false;
     if (opt.data) { req.data = opt.data; };
     // 加入header  默认+传参
@@ -96,46 +96,39 @@ var llwx = {
     this.extend(this.config.header, opt.header);
     req.header = this.config.header;
     try {
-      console.log(req)
       wx.request(req);
     } catch (e) {
       console.log(e);
     }
   },
-  pajax: function(opt){
-    return new Promise((resolve,reject)=>{
-      // opt.success = (res,r) => resolve(res)
-      // opt.fail = err => reject(err);
+  pajax: function (opt) {
+    return new Promise((resolve, reject) => {
+      opt.success = (res, r) => resolve(res)
+      opt.fail = err => reject(err);
       // return与不return的区别是 是否等待Promise里面的程序执行完
-      return new Promise((resolve1,reject1)=>{ 
+      return new Promise((resolve1, reject1) => {
         if (opt.token == true) {
-          opt.success = (res, r) => resolve1(r);  // 此处resolve只能传递一个参数
-          opt.fail = err => reject1(err);
+          return this.Token.verify().then(res => {
+            resolve1(res)
+          })
         } else {
-          opt.success = (res, r) => resolve(res)
-          opt.fail = err => reject(err);
+          resolve1();
         }
-        this.ajax(opt)
-      }).then(r=>{
-        if (r.statusCode == 401 && (!opt.retry)) {
-          // token已经过期
-          opt.retry = true;
-          return this.pajax(opt)
-        }
-        console.log(r);
+      }).then(res => {
+        this.ajax(opt);  // 返不返回Promise决定是否异步,
       });
     });
   },
   Token: {
     key: () => Config.tokenKey,
-    get(){
+    get() {
       return wx.getStorageSync(this.key())
     },
-    set(token) { 
+    set(token) {
       wx.setStorageSync(this.key(), token)
     },
     verify() {
-      var token = this.get(); 
+      var token = this.get();
       if (!token) {
         return this.getTokenFromServer();
       } else {
@@ -155,7 +148,7 @@ var llwx = {
               data: {
                 code: res.code
               }
-            }).then((res,rsp) => {
+            }).then((res, rsp) => {
               // this 指向 llwx.Token
               if (res.token) {
                 this.set(res.token);
@@ -172,27 +165,27 @@ var llwx = {
 
     // 验证token并自动更新
     verifyTokenFromServer() {
-        return new Promise((resolve, reject) => {
-          llwx.pajax({
-            url: 'token/user/verify',
-            method: 'post',
-            data: { token: this.get() }
-          }).then((res,rsp) => {
-            if (!res.isValid) {
-              this.getTokenFromServer().then(res => {
-                resolve(res);
-              })
-            } else {
-              resolve(this.get())
-            }
-          })
-        });
-      }
+      return new Promise((resolve, reject) => {
+        llwx.pajax({
+          url: 'token/user/verify',
+          method: 'post',
+          data: { token: this.get() }
+        }).then((res, rsp) => {
+          if (!res.isValid) {
+            this.getTokenFromServer().then(res => {
+              resolve(res);
+            })
+          } else {
+            resolve(this.get())
+          }
+        })
+      });
+    }
   }
 };
 
 
-module.exports = { 
+module.exports = {
   llwx
 };
 
