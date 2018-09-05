@@ -96,7 +96,6 @@ var llwx = {
     this.extend(this.config.header, opt.header);
     req.header = this.config.header;
     try {
-      console.log(req)
       wx.request(req);
     } catch (e) {
       console.log(e);
@@ -118,11 +117,12 @@ var llwx = {
         this.ajax(opt)
       }).then(r=>{
         if (r.statusCode == 401 && (!opt.retry)) {
-          // token已经过期
+          // token已经过期  aop 思想
           opt.retry = true;
-          return this.pajax(opt)
+          return this.Token.getTokenFromServer().then(res => {
+            return this.pajax(opt)
+          })
         }
-        console.log(r);
       });
     });
   },
