@@ -14,7 +14,7 @@ Page({
   data: {
     selectedTotalCount: 0,
     selectedTypeCount: 0,
-    selectedMoney: 0
+    selectedMoney: 0,
   },
 
   /**
@@ -28,6 +28,12 @@ Page({
 
   _loadData: function(){
     
+  },
+
+  // 隐藏后执行的方法
+  onHide: function(){
+    // 更新数据到缓存
+    cart.setCart(currentApp.data.carts);
   },
 
 
@@ -65,7 +71,6 @@ Page({
     }
   },
 
-
   // 监听事件
   listen: function (e) {
     var data = e.currentTarget.dataset;
@@ -79,7 +84,7 @@ Page({
 
   // 处理事件
   eventHandler: {
-    // 商品数量选择
+    // 商品状态选择
     toggleSelect: (data, e) => {
       var id = data.id;
       var index = cart.getProductIndexById(id);
@@ -96,6 +101,52 @@ Page({
 
     toggleSelectAll: (data,e) => {
       var carts = currentApp.data.carts;
+      // 重新计算价格
+      var scar = cart.getCountAddMoney(carts);
+      cart.setPriceToAppData(scar)  
+    },
+
+    // 商品状态全选
+    toggleSelectAll: (data,e) => {
+      var carts = currentApp.data.carts;
+      var status = data.status;
+      for ( var i=0;i<carts.length;i++ ){
+        carts[i].selectStatus = !status;
+      }
+      // 通知视图
+      currentApp.setData({ carts: carts });
+      // 通知缓存
+      cart.setCart(carts);
+      // 重新计算价格
+      var scar = cart.getCountAddMoney(carts);
+      cart.setPriceToAppData(scar)  
+    },
+
+    // 增减商品数量
+    changeCounts: (data,e) => {
+      cart.changeCount(data.id,data.type)
+      // 重新计算价格
+      var carts = currentApp.data.carts;
+      var scar = cart.getCountAddMoney(carts);
+      cart.setPriceToAppData(scar)  
+    },
+
+    // 删除单个商品
+    deleteOne: (data,e) => {
+      cart.deleteOne(data.id);
+      // 重新计算价格
+      var carts = currentApp.data.carts;
+      var scar = cart.getCountAddMoney(carts);
+      cart.setPriceToAppData(scar)  
+    },
+
+    // 下单
+    submitOrder: (data,e) => {
+      var param = currentApp.data.selectedMoney + "&from=cart";
+      // 从购物车跳转
+      wx.navigateTo({
+        url: '../order/order?money='+param,
+      })
     }
   },
 

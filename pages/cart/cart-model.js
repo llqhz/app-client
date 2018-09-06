@@ -47,6 +47,16 @@ class Cart extends Model {
     return cart;
   }
 
+  getSelectedCart(cart){
+    var carts = [];
+    for (var item of cart) {
+      if (item.selectStatus) {
+        carts.push(item)
+      }
+    }
+    return carts;
+  }
+
   // flag 表示是否仅返回选中的商品
   getCartCount(flag){
     var length = 0;
@@ -92,6 +102,73 @@ class Cart extends Model {
     return pIndex;
   }
 
+
+  // 计算金额和数量
+  getCountAddMoney(cart) {
+    var totalCount = 0, typeCount = 0, money = 0;
+    let mp = 100; // 使用整数计算
+    for (var li of cart) {
+      if( !li.selectStatus ) continue;
+      totalCount += li.count;
+      typeCount++;
+      money += mp * Number(li.price) * li.count;
+    }
+    return {
+      totalCount: totalCount,
+      typeCount: typeCount,
+      money: money / mp
+    }
+  }
+
+  // 更新价格到视图
+  setPriceToAppData(scar){
+    this.app.setData({
+      selectedTotalCount: scar.totalCount,
+      selectedTypeCount: scar.typeCount,
+      selectedMoney: scar.money,
+    })
+  }
+
+
+  // 计算数量和总价,更新到视图
+  resetCartData(){
+    var carts = this.getCart();  // 所有商品
+    //var selectedCount = cart.getCount(true);  // 选中商品数量
+    var selectedCart = this.getCart(true); // 已经选择的商品
+    var scar = this.getCountAddMoney(selectedCart)
+    this.app.setData({
+      selectedTotalCount: scar.totalCount,
+      selectedTypeCount: scar.typeCount,
+      selectedMoney: scar.money,
+      carts: carts
+    })
+  }
+
+  // 商品数量增减
+  changeCount(id,fun) {
+    var cart = this.app.data.carts;
+    var index = this.getProductIndexById(id);
+    if ( fun == 'incr' ) {
+      cart[index].count++;
+    } else {
+      if (cart[index].count == 1 ) {
+        console.log('商品购买数量只能为正整数')
+        return;
+      }
+      cart[index].count--;
+    }
+    this.app.setData({carts:cart})
+    this.setCart(cart);
+  }
+
+  // 删除单个商品
+  deleteOne(id){
+    var cart = this.app.data.carts;
+    var index = this.getProductIndexById(id);
+    cart.splice(index,1)
+    this.app.setData({ carts: cart })
+    this.setCart(cart);
+  }
 
 
 }

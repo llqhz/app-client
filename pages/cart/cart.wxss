@@ -102,6 +102,10 @@
 }
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 775d6abe73a1061af60d437e095524f0ceb9bee9
 /*合计*/
 .all-accounts-box{
     background-color:#AB956D;
@@ -114,6 +118,11 @@
 .all-select{
     font-size: 28rpx;
     width: 40%;
+<<<<<<< HEAD
+=======
+    display: flex;
+    align-items: center;
+>>>>>>> 775d6abe73a1061af60d437e095524f0ceb9bee9
 }
 .all-select image{
     height: 48rpx;
@@ -123,6 +132,11 @@
 
 .all-price-submit{
     width: 60%;
+<<<<<<< HEAD
+=======
+    display:flex;
+    align-items: center;
+>>>>>>> 775d6abe73a1061af60d437e095524f0ceb9bee9
 }
 .all-price-submit.disabled{
     color: #e6e6e6;
