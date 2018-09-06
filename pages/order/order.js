@@ -1,7 +1,8 @@
 // pages/order/order.js
 import { Order } from 'order-model.js';
 import { Cart } from '../cart/cart-model.js';
-import { Address } from './address-model.js'
+import { Address } from './address-model.js';
+import { llwx } from '../../utils/llwx.js';
 
 const app = getApp()
 var currentApp = {};
@@ -15,6 +16,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    id: null,      // 订单id
     products : [],   // 订单包含的商品
     selectedMoney: 0, // 订单总金额
     orderStatus: 0,
@@ -44,10 +46,14 @@ Page({
 
   _loadData: function(){
     //order.test()
+    address.getAddressFromServer().then(res=>{
+      currentApp.setData({ address: res })
+    })
   },
 
   // 监听事件
   listen: function (e) {
+    console.log(e)
     var data = e.currentTarget.dataset;
     var fun = data.fun;
     if (typeof currentApp.eventHandler[fun] == 'function') {
@@ -73,6 +79,20 @@ Page({
           address.submitAddress(res);
         }
       })
+    },
+    gotoPay: (data,e) => {
+      // 检查收货地址
+      if( !currentApp.data.address ){
+        llwx.dialog.msg('请选择收货地址');
+        return;
+      }
+      // 检查付款状态
+      if( currentApp.data.orderStatus == 0 ) {
+        // 未付款
+        order.firstTimePay();
+      } else {
+        order.moreTimePay();
+      }
     }
   }
 

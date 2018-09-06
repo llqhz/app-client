@@ -25,43 +25,33 @@ var llwx = {
       llwx.config[i] = opt[i];
     }
   },
-  // success(title) success(title,fun) success(title,fun,opt)
-  success: function (title, cb, opt) {
-    var p = {}, opt = opt || {};
-    p.title = title;
-    p.icon = 'success';
-    if (opt.image) p.image = opt.image;
-    if (opt.duration) p.duration = opt.duration;
-    p.mask = (typeof opt.mask == 'undefined') ? true : opt.mask;
-    if (typeof cb == 'function') p.success = cb;
-    if (typeof opt.complete == 'function') p.complete = opt.complete;
-    p.fail = res => { console.log('call wx showToast error : ', res) };
-    return wx.showToast(p);
-  },
-  // tip(text) tips(text,fun) tips(text,fun,title) tips(text,confirm,true) tips(content,cb,opt)
-  tips: function (content, cb, opt) {
-    var p = {}, opt = opt || {};
-    p.content = content;
-    if (typeof opt == 'string') { opt = { title: opt }; };
-    if (typeof opt == 'boolean') { opt = { showCancel: opt, confirm: cb }; cb = null };
-    p.showCancel = opt.showCancel || false;
-    p.title = opt.title || '温馨提示';
-    if (opt.cancelText) p.cancelText = opt.cancelText;
-    if (opt.cancelColor) p.cancelColor = opt.cancelColor;
-    if (opt.confirmText) p.confirmText = opt.confirmText;
-    if (opt.confirmColor) p.confirmColor = opt.confirmColor;
-    if (typeof cb == 'function') {
-      p.success = cb;
-    } else {
-      p.success = function (r) {
-        if (r.confirm)
-          return (typeof opt.confirm == 'function') ? opt.confirm() : false;
-        if (typeof opt.cancel == 'function') opt.cancel();
-      }
+  dialog: {
+    success: (msg,cb) => {
+      wx.showToast({
+        title: msg,
+        success: ()=> cb && cb() 
+      })
+    },
+    msg: (msg,cb) => {
+      wx.showToast({
+        title: msg,
+        icon: 'none',
+        success: ()=>cb && cb()
+      })
+    },
+    alert: (title,content,cb) => {
+      wx.showModal({
+        title: title,
+        content: content,
+        success: function (res) {
+          if (res.confirm) {
+            cb&&cb(true)
+          } else if (res.cancel) {
+            cb&&cb(false)
+          }
+        }
+      })
     }
-    if (typeof opt.complete == 'function') p.complete = opt.complete;
-    p.fail = function (res) { console.log('call wx showModal error : ', res); };
-    return wx.showModal(p);
   },
   url: function (url) {
     if (/http/.test(url)) {
@@ -106,7 +96,7 @@ var llwx = {
       // opt.success = (res,r) => resolve(res)
       // opt.fail = err => reject(err);
       // return与不return的区别是 是否等待Promise里面的程序执行完
-      return new Promise((resolve1,reject1)=>{ 
+      new Promise((resolve1,reject1)=>{ 
         if (opt.token == true) {
           opt.success = (res, r) => resolve1(r);  // 此处resolve只能传递一个参数
           opt.fail = err => reject1(err);
@@ -119,9 +109,20 @@ var llwx = {
         if (r.statusCode == 401 && (!opt.retry)) {
           // token已经过期  aop 思想
           opt.retry = true;
+          opt.success = (res, r) => {
+            resolve(res)
+          }
+          opt.fail = err => reject(err);
+          // 当前opt.success指向 resolve1, 并且此时已经在resolve1处理后的里面
           return this.Token.getTokenFromServer().then(res => {
-            return this.pajax(opt)
+            this.pajax(opt).then(
+              res=>{
+                resolve(res)  // 此处的pajax return不回去,只能调用
+              }
+            );
           })
+        } else {
+          resolve(r.data)
         }
       });
     });

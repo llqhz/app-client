@@ -67,10 +67,10 @@
     </view>
 
   <!--结算-->
-  <view class="footer-account-box order-accounts">
+  <view class="footer-account-box order-accounts" >
     <view class="total-account">
       付款合计：￥{{selectedMoney}}
     </view>
-    <view wx:if="{{orderStatus<=1}}" class="pay {{!addressInfo?'disabled':''}}" ontap="pay">去付款</view>
+    <view wx:if="{{orderStatus<=1}}" bindtap="listen" data-fun="gotoPay" class="pay {{!address?'disabled':''}}" >去付款</view>
   </view>
 </view>

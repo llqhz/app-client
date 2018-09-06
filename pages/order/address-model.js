@@ -10,7 +10,7 @@ class Address extends Model {
     var province = info.provinceName || info.province,
         city = info.cityName || info.city,
         county = info.countyName || info.country,
-        detail = info.detailInfo || detail;
+        detail = info.detailInfo || info.detail;
     var totalDetail = city + county + detail; 
     if ( !this.isCenterCity(province) ) {
       totalDetail = province + totalDetail;
@@ -37,7 +37,7 @@ class Address extends Model {
     }).then(res=>{
       console.log('is submit return',res)
     },res=>{
-
+      console.log('submit reject',res)
     });
   }
 
@@ -52,6 +52,20 @@ class Address extends Model {
       detail: res.detailInfo
     }
   }
+
+  getAddressFromServer(){
+    return llwx.pajax({
+      url: 'address',
+      method: 'get',
+      token: true
+    }).then(res=>{
+      res.totalDetail = this.getAddressDetail(res);
+      return res
+    })
+  }
+
+
+
 
 
 }
