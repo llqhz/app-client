@@ -21,14 +21,12 @@
               <image class='good-image' src="{{item.main_img_url}}"></image>
             </view>
 
-
             <!-- 数量修改 -->
             <view class='cart-item-word'>
               <view class='title-box'>
                 <text class='title'> {{ item.name }} </text>
                 <text>¥ {{ item.price }}</text>
               </view>
- 
               <view class='bottom-box'>
                 <view class='cart-item-counts'>
                   <view class='btns {{item.count<=1?"disabled":""}}' data-id='{{item.id}}' data-type="decr" bindtap='listen' data-fun="changeCounts"  >-</view>
@@ -37,10 +35,7 @@
                 </view>
                 <view class='delete' data-id='{{item.id}}' bindtap='listen' data-fun="deleteOne">x</view>
               </view>
-
-
             </view>
-
 
           </view>
         </view>
