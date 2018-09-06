@@ -28,7 +28,7 @@
                 <text class='title'> {{ item.name }} </text>
                 <text>¥ {{ item.price }}</text>
               </view>
-
+ 
               <view class='bottom-box'>
                 <view class='cart-item-counts'>
                   <view class='btns {{item.count<=1?"disabled":""}}' data-id='{{item.id}}' data-type="decr" bindtap='listen' data-fun="changeCounts"  >-</view>
